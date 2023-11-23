@@ -26,7 +26,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const mobilePrev = document.querySelector("#mobile-prev");
   const addToCart = document.querySelector("#add-to-cart");
 
+  const cartBody = document.querySelector("#cart-body");
+
   const cartEmpty = document.querySelector("#empty");
+  const removeItem = document.querySelector("#remove-item");
+  const orderAmount = document.querySelector("#order-amount");
+  const orderPrice = document.querySelector("#order-price");
+
+  const cartToolTip = document.querySelector("#cart-amount-tip");
 
   if (cartEmpty.nextElementSibling) {
     cartEmpty.classList.add("hidden");
@@ -162,59 +169,44 @@ document.addEventListener("DOMContentLoaded", () => {
     productImg.firstElementChild.setAttribute("src", src);
   });
 
+  let cartIsEmpty = true;
+
+  function updateCartStatus() {
+    if (cartIsEmpty) {
+      cartEmpty.innerText = "Your cart is empty.";
+      cartEmpty.style.marginBlock = "30px";
+      cartBody.classList.add("hidden");
+      cartBody.classList.remove("grid");
+      cartToolTip.innerText = amount.innerText = 0;
+      if (cartToolTip.parentElement.classList.contains("hidden")) {
+        return;
+      } else {
+        cartToolTip.parentElement.classList.add("hidden");
+      }
+    } else {
+      cartEmpty.innerText = "";
+      cartEmpty.style.marginBlock = "0px";
+      cartBody.classList.remove("hidden");
+      cartBody.classList.add("grid");
+      orderAmount.innerText = amount.innerText;
+      orderPrice.innerText = `$${125 * parseFloat(amount.innerText)}.00`;
+
+      cartToolTip.innerText = amount.innerText;
+      if (cartToolTip.parentElement.classList.contains("hidden")) {
+        cartToolTip.parentElement.classList.remove("hidden");
+      }
+    }
+  }
+
   addToCart.addEventListener("click", () => {
     if (amount.innerText == "0") return;
-    cartEmpty.innerText = "";
-    cartModal.insertAdjacentHTML(
-      "beforeend",
-      ` <div
-              id="cart-body"
-              class="grid grid-cols-6 grid-rows-2 gap-6 justify-start items-center p-6"
-            >
-              <span class="row-[1/2] col-[1-2]"
-                ><img
-                  class="h-24 w-24 max-w-full rounded-lg"
-                  src="./images/image-product-1-thumbnail.jpg"
-                  alt=""
-                />
-              </span>
-              <div class="row-[1/2] col-[2/6]">
-                <p class="text-xl">Fall Limited Edition sneakers</p>
-                <p class="text-xl">
-                  $125.00 &times; ${
-                    amount.innerText
-                  } <span class="font-bold">$${
-        parseFloat(amount.innerText) * 125
-      }</span>
-                </p>
-              </div>
-              <span id="remove-item" class="row-[1/2] col-[6/7] ml-auto cursor-pointer"
-                ><img class="max-w-full" src="./images/icon-delete.svg" alt=""
-              /></span>
-              <span
-                class="row-[2/3] col-[1/7] py-8 rounded-lg cursor-pointer text-center place-content-center bg-orange-400"
-              >
-                <a class="block text-2xl" href="/">Checkout</a>
-              </span>
-            </div>`
-    );
-
-    amount.innerText = 0;
-    var removeItem = document.querySelectorAll("#remove-item");
-    Array.from(removeItem).forEach((btn) => {
-      btn.addEventListener("click", (e) => {
-        console.log("ayay");
-        e.target.closest("#cart-body").remove();
-        console.log(cartEmpty.innerText);
-      });
-    });
-
-    if (document.querySelectorAll("#remove-item".length == 0)) {
-      console.log("ayayaaa");
-    }
+    cartIsEmpty = false;
+    updateCartStatus(amount);
   });
 
-  function checkItems() {
-    document.querySelectorAll("#remove-item").length;
-  }
+  removeItem.addEventListener("click", () => {
+    console.log("ayayaya");
+    cartIsEmpty = true;
+    updateCartStatus(amount);
+  });
 });
